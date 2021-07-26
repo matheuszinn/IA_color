@@ -1,3 +1,4 @@
 #Config folders
 
 .vscode/
+__pycache__/
