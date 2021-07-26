@@ -36,7 +36,7 @@ Isso permite que a rede sempre retorne uma cor dada um input.
 ![image](https://user-images.githubusercontent.com/59948197/127056009-736f680c-b7aa-4de5-9fe8-9950df0b2422.png)
 >> Fonte: [A Quantum Model for Multilayer Perceptron](https://www.researchgate.net/publication/327392288_A_Quantum_Model_for_Multilayer_Perceptron)
 
-Uma rede perceptron contém um peso para cada entrada, que podem ser inicializados aleatóreamente. Nesse caso, todas foram iniciadas em 0. Foi também adicionado um *bias* de valor 1 para cada neurônio.
+Uma rede perceptron contém um peso para cada entrada, que podem ser inicializados aleatoriamente. Nesse caso, todas foram iniciadas em 0. Foi também adicionado um *bias* de valor 1 para cada neurônio.
 
 ### Entradas
 ![image](https://user-images.githubusercontent.com/59948197/127053030-9ccca83d-4a75-463c-80d2-ad2224ee3ddb.png)
