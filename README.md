@@ -3,6 +3,8 @@ repositório para uma atividade de Inteligência artificial
 
 ### Descrição da atividade:
 
+> Autor: Matheuszinn
+
 A atividade consiste em desenvolver uma rede neural perceptron simples que consiga reconhecer as cores: 
 
 - Vermelho
