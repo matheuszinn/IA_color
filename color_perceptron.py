@@ -1,34 +1,35 @@
-from string import Template
 from PyInquirer import prompt
-
+from dialog import Dialog
+from random import randint
 from pprint import pprint
 
 questions = [
     {
-        'type': 'list',
-        'name': 'rgb_or_hex',
-        'message': 'Deseja entrar com a cor em hexadecimal ou RGB? ',
-        'choices': [
-            'Hexadecimal',
-            'RGB'
-        ]
+        'type': 'input',
+        'name': 'color_val',
+        'message': 'Entre com a cor (#XXXXXX  r,g,b ou vazio para cor aleatória): ',
     },
     {
         'type': 'input',
-        'name': 'rgb_val',
-        'message': 'Entre com o valor RGB (formato r,g,b ): ',
-        'when': lambda ans: ans['rgb_or_hex'] == 'RGB'
+        'name': 'learning_rate',
+        'message': 'Entre com a taxa de aprendizado: ',
+        'default': '0.01'
     },
     {
         'type': 'input',
-        'name': 'hex_val',
-        'message': 'Entre com o valor hexadecimal (formato #XXXXXX ): ',
-        'when': lambda ans: ans['rgb_or_hex'] == 'Hexadecimal'
-    }
+        'name': 'epochs',
+        'message': 'Entre com a quantidade de epochs: ',
+        'default': '10'
+    },
+    {
+        'type': 'confirm',
+        'name': 'debug',
+        'message': 'Mostar os neurônios ativados ?'
+    },
 ]
 
 
-def hex_to_rgb(c):
+def hex_to_rgb(c: str) -> list:
     h = c.lstrip('#')
     return list(int(h[i:i+2], 16) for i in (0, 2, 4))
 
@@ -57,23 +58,18 @@ dados = [
 
 
 class Neuronio:
-    def __init__(self, learning_rate) -> None:
+    def __init__(self, learning_rate: float) -> None:
         self.weights = [0, 0, 0]
         self.y = 0
         self.learning_rate = learning_rate
 
-    def calculate(self, vals) -> float:
+    def calculate(self, vals: list) -> float:
 
-        res = []
-
-        for x, w in zip(vals, self.weights):
-            res.append(x*w)
-
-        self.y = sum(res)
-
+        res = [x*w for x, w in zip(vals, self.weights)]
+        self.y = sum(res) + 1
         return self.y
 
-    def correct_weights(self, inputs, expected) -> None:
+    def correct_weights(self, inputs: list, expected: float) -> None:
         error = expected - self.y
         for i in range(len(self.weights)):
             self.weights[i] = self.weights[i] + \
@@ -81,7 +77,7 @@ class Neuronio:
 
 
 class Perceptron:
-    def __init__(self, dados, learning_rate=0.2, epochs=1) -> None:
+    def __init__(self, dados: list, learning_rate: float = 0.2, epochs: int = 1) -> None:
         self.neurons = [Neuronio(learning_rate=learning_rate)
                         for _ in range(8)]
         self.dados = dados
@@ -94,46 +90,56 @@ class Perceptron:
                     self.neurons[n].calculate(input[0])
                     self.neurons[n].correct_weights(input[0], input[1][n])
 
-    def predict(self, inputs) -> str:
+    def predict(self, inputs: list, debug: bool = False) -> Dialog:
 
-        s = Template(
-            f'\033[38;2;{inputs[0]};{inputs[1]};{inputs[2]}m$color\033[0m')
+        dialog = Dialog(r=inputs[0], g=inputs[1], b=inputs[2])
 
         predicts = [self.neurons[i].calculate(
             normalization(inputs)) for i in range(len(self.neurons))]
         color = predicts.index(max(predicts))
 
+        if debug:
+            pprint(predicts)
+
         if color == 0:
-            return s.substitute(color='Vermelho!')
+            dialog.set_text('Vermelho!')
         elif color == 1:
-            return s.substitute(color='Verde!')
+            dialog.set_text('Verde!')
         elif color == 2:
-            return s.substitute(color='Azul!')
+            dialog.set_text('Azul!')
         elif color == 3:
-            return s.substitute(color='Preto!')
+            dialog.set_text('Preto!')
         elif color == 4:
-            return s.substitute(color='Branco!')
+            dialog.set_text('Branco!')
         elif color == 5:
-            return s.substitute(color='Amarelo!')
+            dialog.set_text('Amarelo!')
         elif color == 6:
-            return s.substitute(color='Magenta!')
+            dialog.set_text('Magenta!')
         else:
-            return s.substitute(color='Ciano!')
+            dialog.set_text('Ciano!')
+
+        return dialog
 
 
 def main():
 
     answers = prompt(questions)
 
-    if 'rgb_val' in answers:
-        color = list(map(int, answers['rgb_val'].split(',')))
-    else:
-        color = hex_to_rgb(answers['hex_val'])
+    learning_rate = float(answers['learning_rate'])
+    epochs = int(answers['epochs'])
 
-    perceptron = Perceptron(dados)
+    if '#' in answers['color_val']:
+        color = hex_to_rgb(answers['color_val'])
+    elif len(answers['color_val']) == 0:
+        color = [randint(0, 255), randint(0, 255), randint(0, 255)]
+        Dialog(f'Cor aleatória foi: {color}').show()
+    else:
+        color = list(map(int, answers['color_val'].split(',')))
+
+    perceptron = Perceptron(dados, learning_rate=learning_rate, epochs=epochs)
     perceptron.train()
 
-    print(perceptron.predict(color))
+    perceptron.predict(color, debug=answers['debug']).show()
 
 
 if __name__ == '__main__':
