@@ -55,6 +55,12 @@ Dá pra ver na imagem que a cor passada foi algo entre rosa e vermelho, mas a re
 
 Os valores **RGB** passados claramente resultam em um tom de cinza, mas o sistema não conhece cinza, logo, tenta classificar como algo que ele conhece, que é o branco. 
 
+##### Exemplo Aleatório:
+ 
+![image](https://user-images.githubusercontent.com/59948197/127057590-ebb1105e-610c-421c-8781-c798f0ecec4d.png)
+
+Nesse caso, a rede ficou confusa entre várias classificações, mas devido a estratégia *winner takes all*, apenas o neurônio com o maior valor foi selecionado, e o mesmo era o correspondente ao neurônio que quando ativado, classificaria como 'amarelo'. Observando a cor do texto (que corresponde as valores **RGB** utilizados como input), ela parece mesmo ser um pouco amarela.
+
 ## Conclusão
 
 Foi desenvolvida uma rede perceptron simples do zero, e por mais que exista muito espaço para melhorias,tanto no código, na acurácia etc, o resultado obtido é razoável e imagino que o esperado.
