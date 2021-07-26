@@ -30,3 +30,6 @@ Após os treinamento, foi utilizada a estratégia *winner takes all* para a ativ
 Isso permite que a rede sempre retorne uma cor dada um input.
 
 
+### Entradas
+
+![]('./assets/inputs.png')
